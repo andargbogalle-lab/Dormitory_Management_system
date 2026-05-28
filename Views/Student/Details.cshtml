@@ -1,0 +1,82 @@
+@model dprmitory.Models.Student
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<div class="page-header">
+    <h1>🎓 Student Details</h1>
+    <a asp-action="Index" class="btn btn-secondary">← Back to Students</a>
+</div>
+
+<div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+            <p class="section-title">Personal Info</p>
+            <table style="box-shadow:none;margin:0;">
+                <tr><td style="color:var(--gray-500);width:140px;">Student ID</td><td><strong>@Model.StudentId</strong></td></tr>
+                <tr><td style="color:var(--gray-500);">Full Name</td><td>@Model.FullName</td></tr>
+                <tr><td style="color:var(--gray-500);">Email</td><td>@Model.Email</td></tr>
+                <tr><td style="color:var(--gray-500);">Phone</td><td>@Model.Phone</td></tr>
+                <tr><td style="color:var(--gray-500);">Department</td><td>@Model.Department</td></tr>
+            </table>
+        </div>
+        <div>
+            <p class="section-title">Room & Status</p>
+            <table style="box-shadow:none;margin:0;">
+                <tr>
+                    <td style="color:var(--gray-500);width:140px;">Room</td>
+                    <td>
+                        @if (Model.Room != null)
+                        {
+                            <span class="badge badge-primary">Room @Model.Room.RoomNumber</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-gray">Not Assigned</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color:var(--gray-500);">Check-In</td>
+                    <td>
+                        @if (Model.IsCheckedIn)
+                        {
+                            <span class="badge badge-success">✅ Checked In</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-gray">Not Checked In</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color:var(--gray-500);">Availability</td>
+                    <td>
+                        @if (Model.Status == dprmitory.Models.AvailabilityStatus.Present)
+                        {
+                            <span class="badge badge-success">🟢 Present</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">🔴 Absent</span>
+                        }
+                    </td>
+                </tr>
+                <tr><td style="color:var(--gray-500);">Registered</td><td>@Model.RegistrationDate.ToString("MMM dd, yyyy")</td></tr>
+                @if (Model.CheckInDate.HasValue)
+                {
+                    <tr><td style="color:var(--gray-500);">Check-In Date</td><td>@Model.CheckInDate.Value.ToString("MMM dd, yyyy HH:mm")</td></tr>
+                }
+                @if (Model.CheckOutDate.HasValue)
+                {
+                    <tr><td style="color:var(--gray-500);">Check-Out Date</td><td>@Model.CheckOutDate.Value.ToString("MMM dd, yyyy HH:mm")</td></tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mt-2">
+    <a asp-action="Index" class="btn btn-secondary">← Back to List</a>
+</div>

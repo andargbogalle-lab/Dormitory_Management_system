@@ -1,0 +1,144 @@
+@model List<dprmitory.Models.Student>
+
+@{
+    ViewData["Title"] = "Student Status";
+}
+
+<div class="page-header">
+    <h1>📋 Student Availability Status</h1>
+    <a asp-action="Dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+</div>
+
+<div class="table-wrapper">
+    @Html.AntiForgeryToken()
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Room</th>
+                <th>Check-In Status</th>
+                <th>Availability</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr id="student-row-@student.Id">
+                    <td>
+                        <strong>@student.FullName</strong>
+                        <div style="font-size:.8rem;color:var(--gray-400);">@student.StudentId</div>
+                    </td>
+                    <td>
+                        @if (student.Room != null)
+                        {
+                            <span class="badge badge-primary">Room @student.Room.RoomNumber</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-gray">Not Assigned</span>
+                        }
+                    </td>
+                    <td>
+                        <span id="checkin-badge-@student.Id"
+                              class="badge @(student.IsCheckedIn ? "badge-success" : "badge-gray")">
+                            @(student.IsCheckedIn ? "✅ Checked In" : "⬜ Not Checked In")
+                        </span>
+                    </td>
+                    <td>
+                        <span id="availability-badge-@student.Id"
+                              class="badge @(student.Status == dprmitory.Models.AvailabilityStatus.Present ? "badge-success" : "badge-danger")">
+                            @(student.Status == dprmitory.Models.AvailabilityStatus.Present ? "🟢 Present" : "🔴 Absent")
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <button id="checkin-btn-@student.Id"
+                                    class="btn btn-info btn-sm"
+                                    onclick="checkIn(@student.Id)"
+                                    @(student.IsCheckedIn ? "disabled" : "")>
+                                Check In
+                            </button>
+                            <button id="checkout-btn-@student.Id"
+                                    class="btn btn-warning btn-sm"
+                                    onclick="checkOut(@student.Id)"
+                                    @(!student.IsCheckedIn ? "disabled" : "")>
+                                Check Out
+                            </button>
+                            <button class="btn btn-success btn-sm"
+                                    onclick="markPresent(@student.Id)">
+                                Present
+                            </button>
+                            <button class="btn btn-danger btn-sm"
+                                    onclick="markAbsent(@student.Id)">
+                                Absent
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+<script>
+    function checkIn(id) {
+        post('/Proctor/CheckIn', { studentId: id }, function(data) {
+            if (data.success) {
+                setBadge('checkin-badge-' + id, '✅ Checked In', 'badge-success', 'badge-gray');
+                document.getElementById('checkin-btn-' + id).disabled = true;
+                document.getElementById('checkout-btn-' + id).disabled = false;
+            }
+            showToast(data.message, data.success ? 'success' : 'error');
+        });
+    }
+
+    function checkOut(id) {
+        post('/Proctor/CheckOut', { studentId: id }, function(data) {
+            if (data.success) {
+                setBadge('checkin-badge-' + id, '⬜ Not Checked In', 'badge-gray', 'badge-success');
+                document.getElementById('checkin-btn-' + id).disabled = false;
+                document.getElementById('checkout-btn-' + id).disabled = true;
+            }
+            showToast(data.message, data.success ? 'success' : 'error');
+        });
+    }
+
+    function markPresent(id) {
+        post('/Proctor/UpdateStatus', { studentId: id, status: 0 }, function(data) {
+            if (data.success) {
+                setBadge('availability-badge-' + id, '🟢 Present', 'badge-success', 'badge-danger');
+            }
+            showToast(data.message, data.success ? 'success' : 'error');
+        });
+    }
+
+    function markAbsent(id) {
+        post('/Proctor/UpdateStatus', { studentId: id, status: 1 }, function(data) {
+            if (data.success) {
+                setBadge('availability-badge-' + id, '🔴 Absent', 'badge-danger', 'badge-success');
+            }
+            showToast(data.message, data.success ? 'success' : 'error');
+        });
+    }
+
+    function post(url, params, cb) {
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        var body = Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
+        body += '&__RequestVerificationToken=' + encodeURIComponent(token);
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body
+        }).then(r => r.json()).then(cb);
+    }
+
+    function setBadge(id, text, addCls, removeCls) {
+        var el = document.getElementById(id);
+        el.textContent = text;
+        el.classList.remove(removeCls);
+        el.classList.add(addCls);
+    }
+</script>
+}

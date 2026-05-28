@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Director Dashboard";
+}
+
+<div class="page-header">
+    <h1>🏛 Director Dashboard</h1>
+    <a asp-controller="Auth" asp-action="Logout" class="btn btn-danger btn-sm">Logout</a>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <span class="stat-icon">👥</span>
+        <div class="stat-value">@ViewBag.TotalStudents</div>
+        <div class="stat-label">Total Students</div>
+    </div>
+    <div class="stat-card green">
+        <span class="stat-icon">✅</span>
+        <div class="stat-value">@ViewBag.CheckedInStudents</div>
+        <div class="stat-label">Checked In</div>
+    </div>
+    <div class="stat-card cyan">
+        <span class="stat-icon">🟢</span>
+        <div class="stat-value">@ViewBag.PresentStudents</div>
+        <div class="stat-label">Present Today</div>
+    </div>
+    <div class="stat-card amber">
+        <span class="stat-icon">🏠</span>
+        <div class="stat-value">@ViewBag.OccupiedRooms / @ViewBag.TotalRooms</div>
+        <div class="stat-label">Occupied Rooms</div>
+    </div>
+</div>
+
+<p class="section-title">Management</p>
+<div class="actions-grid">
+    <a asp-action="Reports" class="action-card">
+        <span class="action-icon">📈</span>Detailed Reports
+    </a>
+    <a asp-controller="DailyReport" asp-action="Index" class="action-card">
+        <span class="action-icon">📋</span>Daily Reports
+    </a>
+    <a asp-controller="Proctor" asp-action="AbsentStudents" class="action-card">
+        <span class="action-icon">❌</span>Absent Students
+    </a>
+    <a asp-controller="Proctor" asp-action="PresentStudents" class="action-card">
+        <span class="action-icon">✅</span>Present Students
+    </a>
+    <a asp-controller="Student" asp-action="Index" class="action-card">
+        <span class="action-icon">👥</span>All Students
+    </a>
+    <a asp-controller="Room" asp-action="Index" class="action-card">
+        <span class="action-icon">🚪</span>All Rooms
+    </a>
+    <a asp-controller="Proctor" asp-action="StudentStatus" class="action-card">
+        <span class="action-icon">📊</span>Student Status
+    </a>
+</div>

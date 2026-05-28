@@ -1,0 +1,206 @@
+@model List<dprmitory.Models.Student>
+
+@{
+    ViewData["Title"] = "Absent Students";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-person-x text-danger"></i> Absent Students</h2>
+        <div>
+            <a asp-action="PresentStudents" class="btn btn-success">
+                <i class="bi bi-person-check"></i> View Present Students
+            </a>
+            <a asp-action="StudentStatus" class="btn btn-primary">
+                <i class="bi bi-list"></i> View All Students
+            </a>
+            <a asp-action="Dashboard" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle-fill"></i> 
+        <strong>Summary:</strong> @ViewBag.TotalAbsent out of @ViewBag.TotalStudents students are currently absent
+        (@(ViewBag.TotalStudents > 0 ? ((double)ViewBag.TotalAbsent / ViewBag.TotalStudents * 100).ToString("F1") : "0")%)
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Absent with Room</h6>
+                    <h3 class="text-warning">@ViewBag.AbsentWithRoom</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-secondary">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Absent without Room</h6>
+                    <h3 class="text-secondary">@ViewBag.AbsentWithoutRoom</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Checked In but Absent</h6>
+                    <h3 class="text-info">@ViewBag.AbsentCheckedIn</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-dark">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Not Checked In</h6>
+                    <h3 class="text-dark">@ViewBag.AbsentNotCheckedIn</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-success" role="alert">
+            <i class="bi bi-check-circle-fill"></i> <strong>Great!</strong> All students are present today!
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5><i class="bi bi-exclamation-triangle"></i> Absent Students List</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Department</th>
+                                <th>Room</th>
+                                <th>Check-In Status</th>
+                                <th>Last Check-In</th>
+                                <th>Last Check-Out</th>
+                                <th>Registration Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in Model)
+                            {
+                                <tr>
+                                    <td><strong>@student.StudentId</strong></td>
+                                    <td>@student.FullName</td>
+                                    <td>
+                                        <a href="mailto:@student.Email" class="text-decoration-none">
+                                            <i class="bi bi-envelope"></i> @student.Email
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="tel:@student.Phone" class="text-decoration-none">
+                                            <i class="bi bi-telephone"></i> @student.Phone
+                                        </a>
+                                    </td>
+                                    <td>@student.Department</td>
+                                    <td>
+                                        @if (student.Room != null)
+                                        {
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-door-closed"></i> Room @student.Room.RoomNumber
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-exclamation-triangle"></i> Not Assigned
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-@(student.IsCheckedIn ? "success" : "secondary")">
+                                            @(student.IsCheckedIn ? "Checked In" : "Not Checked In")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (student.CheckInDate.HasValue)
+                                        {
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar-check"></i> @student.CheckInDate.Value.ToString("MMM dd, yyyy")
+                                                <br />
+                                                <i class="bi bi-clock"></i> @student.CheckInDate.Value.ToString("hh:mm tt")
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (student.CheckOutDate.HasValue)
+                                        {
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar-x"></i> @student.CheckOutDate.Value.ToString("MMM dd, yyyy")
+                                                <br />
+                                                <i class="bi bi-clock"></i> @student.CheckOutDate.Value.ToString("hh:mm tt")
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar-plus"></i> @student.RegistrationDate.ToString("MMM dd, yyyy")
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group-vertical" role="group">
+                                            <button class="btn btn-sm btn-success mb-1" onclick="markPresent(@student.Id, '@student.FullName')">
+                                                <i class="bi bi-check-circle"></i> Mark Present
+                                            </button>
+                                            @if (!student.IsCheckedIn && student.RoomId != null)
+                                            {
+                                                <button class="btn btn-sm btn-primary mb-1" onclick="checkIn(@student.Id, '@student.FullName')">
+                                                    <i class="bi bi-box-arrow-in-right"></i> Check In
+                                                </button>
+                                            }
+                                            <a asp-controller="Student" asp-action="Details" asp-route-id="@student.Id" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> View Details
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="bi bi-printer"></i> Print Absent List
+            </button>
+            <button class="btn btn-secondary" onclick="exportToCSV()">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Export to CSV
+            </button>
+        </div>
+    }
+</div>
+
+

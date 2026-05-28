@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Dormitory Management</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a class="brand" asp-controller="Home" asp-action="Index">Dormitory Management</a>
+                <ul class="nav-menu">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Student" asp-action="Index">Students</a></li>
+                    <li><a asp-controller="Room" asp-action="Index">Rooms</a></li>
+                    <li><a asp-controller="Proctor" asp-action="Dashboard">Proctor</a></li>
+                    <li><a asp-controller="Director" asp-action="Dashboard">Director</a></li>
+                </ul>
+                <ul class="nav-user">
+                    @if (Context.Session.GetString("UserRole") != null)
+                    {
+                        <li><span>👤 @Context.Session.GetString("Username")</span></li>
+                        <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Auth" asp-action="Login">Login</a></li>
+                    }
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div id="toast"></div>
+
+    <main class="container">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">✅ @TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-error">❌ @TempData["Error"]</div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="container">
+            &copy; 2026 Dormitory Management System &nbsp;·&nbsp;
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script>
+        // Global toast helper
+        function showToast(message, type) {
+            var t = document.getElementById('toast');
+            t.textContent = message;
+            t.className = 'alert alert-' + (type || 'success');
+            t.style.display = 'block';
+            setTimeout(function () { t.style.display = 'none'; }, 3500);
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

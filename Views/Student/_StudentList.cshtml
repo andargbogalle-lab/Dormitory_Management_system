@@ -1,0 +1,58 @@
+@model List<dprmitory.Models.Student>
+
+<table>
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>Full Name</th>
+            <th>Department</th>
+            <th>Room</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td><span style="font-family:monospace;font-weight:600;">@student.StudentId</span></td>
+                    <td><strong>@student.FullName</strong></td>
+                    <td>@student.Department</td>
+                    <td>
+                        @if (student.Room != null)
+                        {
+                            <span class="badge badge-primary">Room @student.Room.RoomNumber</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-gray">Not Assigned</span>
+                        }
+                    </td>
+                    <td>
+                        @if (student.Status == dprmitory.Models.AvailabilityStatus.Present)
+                        {
+                            <span class="badge badge-success">🟢 Present</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">🔴 Absent</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm">Details</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" style="text-align:center;padding:40px;color:var(--gray-400);">
+                    No students found
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

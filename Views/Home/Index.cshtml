@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div style="text-align:center;padding:60px 0 40px;">
+    <div style="font-size:4rem;margin-bottom:16px;">🏠</div>
+    <h1 style="font-size:2.2rem;margin-bottom:10px;">Dormitory Management System</h1>
+    <p style="color:var(--gray-500);font-size:1.05rem;margin-bottom:40px;">Student Housing Management Platform</p>
+    <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg">Sign In to Continue</a>
+</div>
+
+<div style="max-width:800px;margin:0 auto;">
+    @if (System.IO.File.Exists(System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "dormitory.jpg")))
+    {
+        <div class="card" style="padding:0;overflow:hidden;margin-bottom:28px;">
+            <img src="~/images/dormitory.jpg" alt="Dormitory" style="width:100%;max-height:380px;object-fit:cover;" />
+        </div>
+    }
+
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat-card blue" style="text-align:center;">
+            <span class="stat-icon">🏠</span>
+            <div class="stat-value">10</div>
+            <div class="stat-label">Total Rooms</div>
+        </div>
+        <div class="stat-card green" style="text-align:center;">
+            <span class="stat-icon">👥</span>
+            <div class="stat-value">6</div>
+            <div class="stat-label">Per Room</div>
+        </div>
+        <div class="stat-card cyan" style="text-align:center;">
+            <span class="stat-icon">🎓</span>
+            <div class="stat-value">60</div>
+            <div class="stat-label">Total Capacity</div>
+        </div>
+    </div>
+</div>

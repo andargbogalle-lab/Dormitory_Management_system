@@ -1,0 +1,188 @@
+@model dprmitory.Models.DailyReport
+
+@{
+    ViewData["Title"] = "Edit Daily Report";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-pencil-square"></i> Edit Daily Report</h2>
+        <a asp-action="ProctorReports" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to My Reports
+        </a>
+    </div>
+    
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-info-circle-fill"></i> <strong>Note:</strong> You can modify the statistics and update remarks/issues as needed. Remarks and Issues are optional.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-calendar-date"></i> Report Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="ReportDate" class="form-label"></label>
+                            <input asp-for="ReportDate" type="date" class="form-control" />
+                            <span asp-validation-for="ReportDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <input type="text" value="@Model.Status" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-people"></i> Student Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="TotalStudents" class="form-label"></label>
+                            <input asp-for="TotalStudents" type="number" class="form-control" />
+                            <span asp-validation-for="TotalStudents" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="StudentsPresent" class="form-label"></label>
+                            <input asp-for="StudentsPresent" type="number" class="form-control" />
+                            <span asp-validation-for="StudentsPresent" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="StudentsAbsent" class="form-label"></label>
+                            <input asp-for="StudentsAbsent" type="number" class="form-control" />
+                            <span asp-validation-for="StudentsAbsent" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5><i class="bi bi-door-closed"></i> Room Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="TotalRooms" class="form-label"></label>
+                            <input asp-for="TotalRooms" type="number" class="form-control" />
+                            <span asp-validation-for="TotalRooms" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="OccupiedRooms" class="form-label"></label>
+                            <input asp-for="OccupiedRooms" type="number" class="form-control" />
+                            <span asp-validation-for="OccupiedRooms" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="AvailableRooms" class="form-label"></label>
+                            <input asp-for="AvailableRooms" type="number" class="form-control" />
+                            <span asp-validation-for="AvailableRooms" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="TotalCapacity" class="form-label"></label>
+                            <input asp-for="TotalCapacity" type="number" class="form-control" />
+                            <span asp-validation-for="TotalCapacity" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="CurrentOccupancy" class="form-label"></label>
+                            <input asp-for="CurrentOccupancy" type="number" class="form-control" />
+                            <span asp-validation-for="CurrentOccupancy" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="bi bi-clock-history"></i> Daily Activity</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="CheckInsToday" class="form-label"></label>
+                            <input asp-for="CheckInsToday" type="number" class="form-control" />
+                            <span asp-validation-for="CheckInsToday" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="CheckOutsToday" class="form-label"></label>
+                            <input asp-for="CheckOutsToday" type="number" class="form-control" />
+                            <span asp-validation-for="CheckOutsToday" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5><i class="bi bi-chat-left-text"></i> Additional Information (Optional)</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="Remarks" class="form-label"></label>
+                    <small class="text-muted">(Optional)</small>
+                    <textarea asp-for="Remarks" class="form-control" rows="4" placeholder="Enter any general remarks or observations..."></textarea>
+                    <span asp-validation-for="Remarks" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Issues" class="form-label"></label>
+                    <small class="text-muted">(Optional)</small>
+                    <textarea asp-for="Issues" class="form-control" rows="4" placeholder="Report any issues, problems, or concerns..."></textarea>
+                    <span asp-validation-for="Issues" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" name="action" value="draft" class="btn btn-secondary">
+                <i class="bi bi-save"></i> Save as Draft
+            </button>
+            <button type="submit" name="action" value="submit" class="btn btn-primary">
+                <i class="bi bi-send"></i> Submit Report
+            </button>
+            <a asp-action="ProctorReports" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>

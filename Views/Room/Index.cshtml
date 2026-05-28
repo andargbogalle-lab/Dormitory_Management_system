@@ -1,0 +1,72 @@
+@model List<dprmitory.Models.Room>
+
+@{
+    ViewData["Title"] = "Rooms";
+    var userRole = Context.Session.GetString("UserRole");
+}
+
+<div class="page-header">
+    <h1>🚪 Room Management</h1>
+    <div style="display:flex;gap:10px;">
+        <a asp-action="Allocate" class="btn btn-primary">➕ Allocate Room</a>
+        @if (userRole == "Proctor")
+        {
+            <a asp-controller="Proctor" asp-action="Dashboard" class="btn btn-secondary">← Dashboard</a>
+        }
+        else if (userRole == "Director")
+        {
+            <a asp-controller="Director" asp-action="Dashboard" class="btn btn-secondary">← Dashboard</a>
+        }
+    </div>
+</div>
+
+<div class="rooms-grid">
+    @foreach (var room in Model)
+    {
+        var pct = room.Capacity > 0 ? (room.CurrentOccupancy * 100 / room.Capacity) : 0;
+        var headerCls = room.Status == dprmitory.Models.RoomStatus.Available ? "available"
+                      : room.Status == dprmitory.Models.RoomStatus.Full ? "full" : "partial";
+        var fillCls   = room.CurrentOccupancy == room.Capacity ? "full"
+                      : room.CurrentOccupancy > 0 ? "partial" : "";
+
+        <div class="room-card">
+            <div class="room-card-header @headerCls">
+                <span>Room @room.RoomNumber</span>
+                <span class="badge @(room.Status == dprmitory.Models.RoomStatus.Available ? "badge-success" : room.Status == dprmitory.Models.RoomStatus.Full ? "badge-danger" : "badge-warning")">
+                    @room.Status
+                </span>
+            </div>
+            <div class="room-card-body">
+                <div class="room-meta">
+                    <div class="room-meta-item">
+                        <strong>@room.Type</strong>
+                        Type
+                    </div>
+                    <div class="room-meta-item">
+                        <strong>@room.CurrentOccupancy / @room.Capacity</strong>
+                        Occupancy
+                    </div>
+                </div>
+                <div class="occupancy-bar">
+                    <div class="occupancy-fill @fillCls" style="width:@pct%"></div>
+                </div>
+
+                @if (room.Students.Any())
+                {
+                    <p style="font-size:.82rem;font-weight:700;color:var(--gray-500);margin-bottom:8px;">OCCUPANTS</p>
+                    @foreach (var student in room.Students)
+                    {
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100);">
+                            <span style="font-size:.88rem;">@student.FullName <span style="color:var(--gray-400);">(@student.StudentId)</span></span>
+                            <form asp-controller="Room" asp-action="Deallocate" method="post" style="margin:0;"
+                                  onsubmit="return confirm('Deallocate room for @student.FullName?');">
+                                <input type="hidden" name="studentId" value="@student.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>

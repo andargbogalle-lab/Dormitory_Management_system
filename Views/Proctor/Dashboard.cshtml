@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Proctor Dashboard";
+}
+
+<div class="page-header">
+    <h1>👮 Proctor Dashboard</h1>
+    <a asp-controller="Auth" asp-action="Logout" class="btn btn-danger btn-sm">Logout</a>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <span class="stat-icon">👥</span>
+        <div class="stat-value">@ViewBag.TotalStudents</div>
+        <div class="stat-label">Total Students</div>
+    </div>
+    <div class="stat-card green">
+        <span class="stat-icon">✅</span>
+        <div class="stat-value">@ViewBag.CheckedInStudents</div>
+        <div class="stat-label">Checked In</div>
+    </div>
+    <div class="stat-card cyan">
+        <span class="stat-icon">🟢</span>
+        <div class="stat-value">@ViewBag.PresentStudents</div>
+        <div class="stat-label">Present Today</div>
+    </div>
+    <div class="stat-card amber">
+        <span class="stat-icon">🚪</span>
+        <div class="stat-value">@ViewBag.AvailableRooms</div>
+        <div class="stat-label">Available Rooms</div>
+    </div>
+</div>
+
+<p class="section-title">Quick Actions</p>
+<div class="actions-grid">
+    <a asp-controller="Student" asp-action="Register" class="action-card">
+        <span class="action-icon">➕</span>Register Student
+    </a>
+    <a asp-controller="Room" asp-action="Allocate" class="action-card">
+        <span class="action-icon">🚪</span>Allocate Room
+    </a>
+    <a asp-action="StudentStatus" class="action-card">
+        <span class="action-icon">📋</span>Manage Status
+    </a>
+    <a asp-action="AbsentStudents" class="action-card">
+        <span class="action-icon">❌</span>View Absent
+    </a>
+    <a asp-action="PresentStudents" class="action-card">
+        <span class="action-icon">✅</span>View Present
+    </a>
+    <a asp-controller="DailyReport" asp-action="Create" class="action-card">
+        <span class="action-icon">📝</span>Create Report
+    </a>
+    <a asp-controller="DailyReport" asp-action="ProctorReports" class="action-card">
+        <span class="action-icon">📊</span>My Reports
+    </a>
+    <a asp-controller="Student" asp-action="Index" class="action-card">
+        <span class="action-icon">👥</span>All Students
+    </a>
+</div>

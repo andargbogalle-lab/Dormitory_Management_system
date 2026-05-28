@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Allocate Room";
+    var students = ViewBag.Students as List<dprmitory.Models.Student> ?? new List<dprmitory.Models.Student>();
+    var rooms = ViewBag.Rooms as List<dprmitory.Models.Room> ?? new List<dprmitory.Models.Room>();
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-door-open"></i> Allocate Room to Student</h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Rooms
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="Allocate" method="post">
+        <div class="mb-3">
+            <label for="studentId" class="form-label">Select Student</label>
+            <select name="studentId" id="studentId" class="form-select" required>
+                <option value="">-- Select Student --</option>
+                @foreach (var student in students)
+                {
+                    <option value="@student.Id">@student.FullName (@student.StudentId)</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="roomId" class="form-label">Select Room</label>
+            <select name="roomId" id="roomId" class="form-select" required>
+                <option value="">-- Select Room --</option>
+                @foreach (var room in rooms)
+                {
+                    <option value="@room.Id" data-capacity="@room.Capacity" data-occupancy="@room.CurrentOccupancy">
+                        Room @room.RoomNumber - @room.Type (@room.CurrentOccupancy/@room.Capacity)
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div id="roomInfo" class="alert alert-info" style="display:none;"></div>
+
+        <button type="submit" class="btn btn-primary">Assign Room</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

@@ -1,0 +1,46 @@
+@model List<dprmitory.Models.Student>
+
+@{
+    ViewData["Title"] = "Students";
+    var userRole = Context.Session.GetString("UserRole");
+}
+
+<div class="page-header">
+    <h1>👥 Student Records</h1>
+    <div style="display:flex;gap:10px;">
+        <a asp-action="Register" class="btn btn-primary">➕ Register Student</a>
+        @if (userRole == "Proctor")
+        {
+            <a asp-controller="Proctor" asp-action="Dashboard" class="btn btn-secondary">← Dashboard</a>
+        }
+        else if (userRole == "Director")
+        {
+            <a asp-controller="Director" asp-action="Dashboard" class="btn btn-secondary">← Dashboard</a>
+        }
+    </div>
+</div>
+
+<div class="search-box">
+    <input type="text" id="searchBox" placeholder="Search by name or student ID…" />
+</div>
+
+<div class="table-wrapper" id="studentList">
+    <partial name="_StudentList" model="Model" />
+</div>
+
+@section Scripts {
+<script>
+    var searchTimeout;
+    document.getElementById('searchBox').addEventListener('input', function () {
+        clearTimeout(searchTimeout);
+        var term = this.value;
+        searchTimeout = setTimeout(function () {
+            fetch('/Student/Search?searchTerm=' + encodeURIComponent(term))
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('studentList').innerHTML = html;
+                });
+        }, 300);
+    });
+</script>
+}

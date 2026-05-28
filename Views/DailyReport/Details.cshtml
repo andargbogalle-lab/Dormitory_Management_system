@@ -1,0 +1,236 @@
+@model dprmitory.Models.DailyReport
+
+@{
+    ViewData["Title"] = "Report Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-earmark-text"></i> Daily Report Details</h2>
+        <div>
+            @if (Context.Session.GetString("UserRole") == "Proctor")
+            {
+                <a asp-action="ProctorReports" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to My Reports
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to All Reports
+                </a>
+            }
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5><i class="bi bi-info-circle"></i> Report Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Report Date:</strong> @Model.ReportDate.ToString("MMMM dd, yyyy")</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Prepared By:</strong> @Model.PreparedBy</p>
+                </div>
+                <div class="col-md-4">
+                    <p>
+                        <strong>Status:</strong>
+                        @if (Model.Status == dprmitory.Models.ReportStatus.Draft)
+                        {
+                            <span class="badge bg-secondary">Draft</span>
+                        }
+                        else if (Model.Status == dprmitory.Models.ReportStatus.Submitted)
+                        {
+                            <span class="badge bg-primary">Submitted</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Reviewed</span>
+                        }
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p><strong>Created At:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5><i class="bi bi-people"></i> Student Statistics</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Total Students</h6>
+                            <h2 class="text-primary">@Model.TotalStudents</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Students Present</h6>
+                            <h2 class="text-success">@Model.StudentsPresent</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-danger">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Students Absent</h6>
+                            <h2 class="text-danger">@Model.StudentsAbsent</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5><i class="bi bi-door-closed"></i> Room Statistics</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Total Rooms</h6>
+                            <h2 class="text-info">@Model.TotalRooms</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-warning">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Occupied Rooms</h6>
+                            <h2 class="text-warning">@Model.OccupiedRooms</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-secondary">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Available Rooms</h6>
+                            <h2 class="text-secondary">@Model.AvailableRooms</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Total Capacity:</strong> @Model.TotalCapacity beds</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Current Occupancy:</strong> @Model.CurrentOccupancy beds</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="progress" style="height: 30px;">
+                        @{
+                            var occupancyRate = Model.TotalCapacity > 0 ? (double)Model.CurrentOccupancy / Model.TotalCapacity * 100 : 0;
+                        }
+                        <div class="progress-bar bg-info" role="progressbar" style="width: @occupancyRate%" aria-valuenow="@occupancyRate" aria-valuemin="0" aria-valuemax="100">
+                            @occupancyRate.ToString("F1")% Occupied
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5><i class="bi bi-clock-history"></i> Daily Activity</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted"><i class="bi bi-arrow-down-circle"></i> Check-ins Today</h6>
+                            <h2 class="text-success">@Model.CheckInsToday</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-danger">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted"><i class="bi bi-arrow-up-circle"></i> Check-outs Today</h6>
+                            <h2 class="text-danger">@Model.CheckOutsToday</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Remarks) || !string.IsNullOrWhiteSpace(Model.Issues))
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5><i class="bi bi-chat-left-text"></i> Additional Information</h5>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrWhiteSpace(Model.Remarks))
+                {
+                    <div class="mb-3">
+                        <h6><strong>Remarks/Notes:</strong></h6>
+                        <p class="text-muted">@Model.Remarks</p>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Issues))
+                {
+                    <div class="mb-3">
+                        <h6><strong>Issues Reported:</strong></h6>
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> @Model.Issues
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="mb-3">
+        @if (Context.Session.GetString("UserRole") == "Director" && Model.Status == dprmitory.Models.ReportStatus.Submitted)
+        {
+            <form asp-action="MarkReviewed" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Mark as Reviewed
+                </button>
+            </form>
+        }
+        
+        @if (Context.Session.GetString("UserRole") == "Proctor" && Model.Status == dprmitory.Models.ReportStatus.Draft)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit Report
+            </a>
+        }
+
+        <button onclick="window.print()" class="btn btn-secondary">
+            <i class="bi bi-printer"></i> Print Report
+        </button>
+    </div>
+</div>
+
+

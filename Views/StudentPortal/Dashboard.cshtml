@@ -1,0 +1,111 @@
+@model dprmitory.Models.Student
+
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-person-circle"></i> Welcome, @Model.FullName</h2>
+        <div>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-house"></i> Home
+            </a>
+            <a asp-controller="Auth" asp-action="Logout" class="btn btn-danger">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5>Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Student ID:</strong> @Model.StudentId</p>
+                    <p><strong>Full Name:</strong> @Model.FullName</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <p><strong>Phone:</strong> @Model.Phone</p>
+                    <p><strong>Department:</strong> @Model.Department</p>
+                    <p><strong>Registration Date:</strong> @Model.RegistrationDate.ToString("MMM dd, yyyy")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h5>Room Information</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Room != null)
+                    {
+                        <p><strong>Room Number:</strong> @Model.Room.RoomNumber</p>
+                        <p><strong>Room Type:</strong> @Model.Room.Type</p>
+                        <p><strong>Capacity:</strong> @Model.Room.Capacity</p>
+                        <p><strong>Current Occupancy:</strong> @Model.Room.CurrentOccupancy</p>
+                        
+                        @if (Model.Room.Students.Count > 1)
+                        {
+                            <hr />
+                            <p><strong>Roommates:</strong></p>
+                            <ul>
+                                @foreach (var roommate in Model.Room.Students.Where(s => s.Id != Model.Id))
+                                {
+                                    <li>@roommate.FullName (@roommate.StudentId)</li>
+                                }
+                            </ul>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No room assigned yet</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>Check-In Status</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> 
+                        <span class="badge bg-@(Model.IsCheckedIn ? "success" : "secondary")">
+                            @(Model.IsCheckedIn ? "Checked In" : "Not Checked In")
+                        </span>
+                    </p>
+                    @if (Model.CheckInDate.HasValue)
+                    {
+                        <p><strong>Check-In Date:</strong> @Model.CheckInDate.Value.ToString("MMM dd, yyyy hh:mm tt")</p>
+                    }
+                    @if (Model.CheckOutDate.HasValue)
+                    {
+                        <p><strong>Last Check-Out:</strong> @Model.CheckOutDate.Value.ToString("MMM dd, yyyy hh:mm tt")</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5>Availability Status</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Current Status:</strong> 
+                        <span class="badge bg-@(Model.Status == dprmitory.Models.AvailabilityStatus.Present ? "success" : "secondary")">
+                            @Model.Status
+                        </span>
+                    </p>
+                    <p class="text-muted">Your availability status is managed by the proctor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

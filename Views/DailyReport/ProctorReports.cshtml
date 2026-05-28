@@ -1,0 +1,111 @@
+@model List<dprmitory.Models.DailyReport>
+
+@{
+    ViewData["Title"] = "My Daily Reports";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-earmark-text"></i> My Daily Reports</h2>
+        <div>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Report
+            </a>
+            <a asp-controller="Proctor" asp-action="Dashboard" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> No reports found. Create your first daily report!
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Report Date</th>
+                        <th>Status</th>
+                        <th>Students (P/A)</th>
+                        <th>Rooms (O/A)</th>
+                        <th>Check-ins/Outs</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var report in Model)
+                    {
+                        <tr>
+                            <td>@report.ReportDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (report.Status == dprmitory.Models.ReportStatus.Draft)
+                                {
+                                    <span class="badge bg-secondary">Draft</span>
+                                }
+                                else if (report.Status == dprmitory.Models.ReportStatus.Submitted)
+                                {
+                                    <span class="badge bg-primary">Submitted</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Reviewed</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="text-success">@report.StudentsPresent</span> / 
+                                <span class="text-danger">@report.StudentsAbsent</span>
+                            </td>
+                            <td>
+                                <span class="text-info">@report.OccupiedRooms</span> / 
+                                <span class="text-secondary">@report.AvailableRooms</span>
+                            </td>
+                            <td>
+                                <i class="bi bi-arrow-down-circle text-success"></i> @report.CheckInsToday / 
+                                <i class="bi bi-arrow-up-circle text-danger"></i> @report.CheckOutsToday
+                            </td>
+                            <td>@report.CreatedAt.ToString("MMM dd, HH:mm")</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@report.Id" class="btn btn-sm btn-info" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                @if (report.Status == dprmitory.Models.ReportStatus.Draft)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@report.Id" class="btn btn-sm btn-warning" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@report.Id" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this report?');">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
